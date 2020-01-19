@@ -1,8 +1,14 @@
 import 'dart:io';
 
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:joetravel/utility/My_style.dart';
+import 'package:joetravel/utility/normal_dialog.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -12,6 +18,7 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
 //  Field
   File file;
+  String name, email, password, uid, url;
 
 // Method
 
@@ -20,6 +27,10 @@ class _RegisterState extends State<Register> {
     return Container(
       margin: EdgeInsets.only(left: 30.0, right: 30.0),
       child: TextField(
+        keyboardType: TextInputType.emailAddress,
+        onChanged: (String string) {
+          email = string.trim();
+        },
         decoration: InputDecoration(
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: color)),
@@ -38,6 +49,9 @@ class _RegisterState extends State<Register> {
     return Container(
       margin: EdgeInsets.only(left: 30.0, right: 30.0),
       child: TextField(
+        onChanged: (String string) {
+          password = string.trim();
+        },
         decoration: InputDecoration(
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: color)),
@@ -56,6 +70,9 @@ class _RegisterState extends State<Register> {
     return Container(
       margin: EdgeInsets.only(left: 30.0, right: 30.0),
       child: TextField(
+        onChanged: (String string) {
+          name = string.trim();
+        },
         decoration: InputDecoration(
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: color)),
@@ -123,8 +140,73 @@ class _RegisterState extends State<Register> {
   Widget registerButton() {
     return IconButton(
       icon: Icon(Icons.cloud_upload),
-      onPressed: () {},
+      onPressed: () {
+        if (file == null) {
+          normalDialog(
+              context, 'NO Image', 'Plase Click or Gallery for Choose Image');
+        } else if (name == null ||
+            name.isEmpty ||
+            email == null ||
+            email.isEmpty ||
+            password == null ||
+            password.isEmpty) {
+          normalDialog(context, 'Have Space', 'Plese Fill Every Blank');
+        } else {
+          registerFirebase();
+        }
+      },
     );
+  }
+
+  Future<void> registerFirebase() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth
+        .createUserWithEmailAndPassword(email: email, password: password)
+        .then((response) {
+      print('Register Success');
+      findUID();
+    }).catchError((response) {
+      print('Register Fale');
+      String title = response.code;
+      String message = response.message;
+      normalDialog(context, title, message);
+    });
+  }
+
+  Future<void> findUID() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    uid = firebaseUser.uid;
+    print('uid = $uid');
+    uploadPicture();
+  }
+
+  Future<void> uploadPicture() async {
+    Random random = Random();
+    int i = random.nextInt(1000);
+    String namePic = 'avata$i.jpg';
+
+    FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+    StorageReference storageReference =
+        firebaseStorage.ref().child('Avatar/$namePic');
+    StorageUploadTask storageUploadTask = storageReference.putFile(file);
+
+    url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    print('url = $url');
+    insertValueToFirestore();
+  }
+
+  Future<void> insertValueToFirestore() async {
+    Map<String, dynamic> map = Map();
+    map['Name'] = name;
+    map['Uid'] = uid;
+    map['Url'] = url;
+
+    Firestore firestore = Firestore.instance;
+    CollectionReference collectionReference = firestore.collection('Travel');
+    await collectionReference.document().setData(map).then((respone) {
+      Navigator.of(context).pop();
+    });
   }
 
   @override

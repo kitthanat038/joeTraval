@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1084095159390",
+    "firebase_url": "https://joetravel-1f150.firebaseio.com",
+    "project_id": "joetravel-1f150",
+    "storage_bucket": "joetravel-1f150.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084095159390:android:5479b097400c269e8f68cf",
+        "android_client_info": {
+          "package_name": "com.emagic.joetravel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1084095159390-2c23j7e994qlh4n2pud54ounjh4hc1g4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA46TKhXg7nOgqoRzKpAGpqawgNeyTcClk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1084095159390-2c23j7e994qlh4n2pud54ounjh4hc1g4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
