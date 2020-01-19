@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:joetravel/utility/My_style.dart';
 
 class Register extends StatefulWidget {
@@ -8,6 +11,8 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
 //  Field
+  File file;
+
 // Method
 
   Widget emailFrom() {
@@ -68,15 +73,35 @@ class _RegisterState extends State<Register> {
     return OutlineButton.icon(
       icon: Icon(Icons.add_a_photo),
       label: Text('Camera'),
-      onPressed: () {},
+      onPressed: () {
+        cameraOrGallery(ImageSource.camera);
+      },
     );
+  }
+
+  Future<void> cameraOrGallery(ImageSource imageSource) async {
+    try {
+      var object = await ImagePicker.pickImage(
+        source: imageSource,
+        maxHeight: 800.0,
+        maxWidth: 800.0,
+      );
+
+      setState(() {
+        file = object;
+      });
+    } catch (e) {
+      print('e ===>> ${e.toString()}');
+    }
   }
 
   Widget galleryButton() {
     return OutlineButton.icon(
       icon: Icon(Icons.add_photo_alternate),
       label: Text('gallery'),
-      onPressed: () {},
+      onPressed: () {
+        cameraOrGallery(ImageSource.gallery);
+      },
     );
   }
 
@@ -91,7 +116,7 @@ class _RegisterState extends State<Register> {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * 0.5,
-      child: Image.asset('images/avatar.png'),
+      child: file == null ? Image.asset('images/avatar.png') : Image.file(file),
     );
   }
 
@@ -119,8 +144,7 @@ class _RegisterState extends State<Register> {
           nameFrom(),
           emailFrom(),
           passwordFrom(),
-          ]
-        ,
+        ],
       ),
     );
   }
