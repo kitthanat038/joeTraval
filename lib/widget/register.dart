@@ -10,6 +10,42 @@ class _RegisterState extends State<Register> {
 //  Field
 // Method
 
+  Widget emailFrom() {
+    Color color = Colors.blueAccent;
+    return Container(
+      margin: EdgeInsets.only(left: 30.0, right: 30.0),
+      child: TextField(
+        decoration: InputDecoration(
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: color)),
+          helperText: 'Type Your Email In Blank',
+          helperStyle: TextStyle(color: color),
+          labelText: 'Email :',
+          labelStyle: TextStyle(color: color),
+          icon: Icon(Icons.email, color: color, size: 36.0),
+        ),
+      ),
+    );
+  }
+
+  Widget passwordFrom() {
+    Color color = Colors.green;
+    return Container(
+      margin: EdgeInsets.only(left: 30.0, right: 30.0),
+      child: TextField(
+        decoration: InputDecoration(
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: color)),
+          helperText: 'Type Your Password In Blank',
+          helperStyle: TextStyle(color: color),
+          labelText: 'Password :',
+          labelStyle: TextStyle(color: color),
+          icon: Icon(Icons.lock, color: color, size: 36.0),
+        ),
+      ),
+    );
+  }
+
   Widget nameFrom() {
     Color color = Colors.purple;
     return Container(
@@ -81,7 +117,10 @@ class _RegisterState extends State<Register> {
           showAvatar(),
           showButton(),
           nameFrom(),
-        ],
+          emailFrom(),
+          passwordFrom(),
+          ]
+        ,
       ),
     );
   }
